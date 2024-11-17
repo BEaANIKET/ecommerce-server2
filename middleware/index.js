@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { User } from '../model/user.model.js'
 
-export const isAuthorized = async (req, res, next) => {
+export const isAuth = async (req, res, next) => {
     try {
         const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer", "")
 
