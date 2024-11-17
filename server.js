@@ -20,6 +20,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
+app.use(passport.initialize()); 
+
 
 import AuthRouter from './router/auth.router.js'
 
@@ -30,6 +32,4 @@ app.use('/', (req, res) => {
 })
 app.listen(4000, '0.0.0.0', () => {
     console.log("Server is running on port http://localhost:4000");
-});
-
-app.use(passport.initialize());
+});            
