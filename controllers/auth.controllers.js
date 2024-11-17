@@ -22,6 +22,7 @@ export const register = async (req, res) => {
             lname,
             email,
             password,
+            role: 'owner'
         });
 
         await newUser.save();
@@ -51,7 +52,7 @@ export const login = async (req, res) => {
             return res.status(401).json({ message: "Invalid email or password" });
         }
 
-        const token = await generateToken({ email: existedUser.email })
+        const token = await generateToken({ email: existedUser.email, id: existedUser.id })
 
         res.cookie("token", token, {
             httpOnly: true,
@@ -108,6 +109,7 @@ export const getCurrUser = async (req, res) => {
     }
 }
 
+
 export const authUsingGoogle= (req, res) => {
     try{
 
@@ -130,3 +132,4 @@ export const authUsingGoogle= (req, res) => {
     }
 
 }
+
