@@ -30,8 +30,9 @@ app.use('/api/auth', AuthRouter)
 app.use('/api/role', roleRouter)
 
 app.use('/', (req, res) => {
-    res.send('Hello, World!');
+    return res.json({message:'Hello, World!'});
 })
+
 app.listen(4000, '0.0.0.0', () => {
     console.log("Server is running on port http://localhost:4000");
 });            

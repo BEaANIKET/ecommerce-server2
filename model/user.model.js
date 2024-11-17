@@ -2,16 +2,15 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
-    fname: { type: String},
-    lname: { type: String },
-    email: { type: String unique: true },
-    password: { type: String, required: true },
+    name: { type: String},
+    email: { type: String, unique: true },
+    password: { type: String },
     googleId: {
         type: String,
     },
     roleChangeRequest: {
         requestedRole: { type: String, enum: ["pandit", "seller"], default: null },
-        status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+        status: { type: String, enum: ["pending", "approved", "rejected", null], default: null},
         requestedAt: { type: Date },
     },
 }, { timestamps: true });

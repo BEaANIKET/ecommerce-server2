@@ -113,15 +113,15 @@ export const getCurrUser = async (req, res) => {
 export const authUsingGoogle= (req, res) => {
     try{
 
-        const { user, token } = req.authInfo;
-
-        console.log(user, token);
-        
-        return res.status(200).json({
-            sucess: true, 
-            token, 
-            user
+        const { user, token } = req?.user;
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 7*24*60*60
         });
+        
+        const redirectUri = process.env.FRONTEND_URL || 'http://localhost:3000';
+        return res.redirect(`${redirectUri}/redirect?token=${token}`);
 
     } catch(error) {
 
