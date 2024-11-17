@@ -18,22 +18,27 @@ const passPort= passport.use(
       try {
         // Find or create user in the database
         let user = await User.findOne({ googleId: profile.id  });
-
+        console.log("user", user);
+        
         if (!user) {
            user= await User.findOne({ email: profile.emails[0].value });
+           console.log("user", user);
 
           if(!user){
             user= await User.create({
                 googleId: profile.id,
                 email: profile.emails[0].value,
-                fname: profile.displayName,
+                name: profile.displayName,
             });
+            console.log("user", user);
           }else{
             user.googleId=profile.id
+            console.log("user", user);
           }
         }
 
-        const token= generateToken(user.email)
+        const token= await generateToken({email: user.email})
+        console.log(token)
         return done(null, { user, token });
       } catch (err) {
         return done(err, null);

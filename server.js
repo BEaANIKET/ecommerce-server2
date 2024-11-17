@@ -20,6 +20,8 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }))
 
+app.use(passport.initialize()); 
+
 
 import AuthRouter from './router/auth.router.js'
 import roleRouter from './router/role.router.js'
@@ -28,10 +30,9 @@ app.use('/api/auth', AuthRouter)
 app.use('/api/role', roleRouter)
 
 app.use('/', (req, res) => {
-    res.send('Hello, World!');
+    return res.json({message:'Hello, World!'});
 })
+
 app.listen(4000, '0.0.0.0', () => {
     console.log("Server is running on port http://localhost:4000");
-});
-
-app.use(passport.initialize());
+});            
