@@ -3,6 +3,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv'
 import { dbConnect } from './db/index.js';
+import passport from 'passport';
 
 const app = express();
 dotenv.config()
@@ -30,3 +31,5 @@ app.use('/', (req, res) => {
 app.listen(4000, '0.0.0.0', () => {
     console.log("Server is running on port http://localhost:4000");
 });
+
+app.use(passport.initialize());
