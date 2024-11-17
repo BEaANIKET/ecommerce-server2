@@ -2,35 +2,24 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
-    fname: {
-        type: String,
-        required: true,
-    },
-    lname: {
-        type: String,
-        required: true,
-    },
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: true,
-    },
+    fname: { type: String, required: true },
+    lname: { type: String, required: true },
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
     role: {
         type: String,
-        default: 'user',
+        enum: ["user", "pandit", "seller", "owner"],
+        default: "user"
     },
-    contactNo: {
+    googleId: {
         type: String,
     },
-    Dob: {
-        type: Date
-    }
-
-});
+    roleChangeRequest: {
+        requestedRole: { type: String, enum: ["pandit", "seller"], default: null },
+        status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+        requestedAt: { type: Date },
+    },
+}, { timestamps: true });
 
 userSchema.methods.validatePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);

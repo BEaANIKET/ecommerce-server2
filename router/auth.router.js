@@ -1,7 +1,7 @@
 
 import { Router } from "express";
 import { getCurrUser, login, logout, register } from "../controllers/auth.controllers.js";
-import { isAuthorized } from "../middleware/index.js";
+import { isAuth } from "../middleware/index.js";
 
 const router = new Router()
 
@@ -12,8 +12,8 @@ router.get('/get', async (req, res) => {
 })
 router.post('/register', register)
 router.post('/login', login)
-router.post('/logout', isAuthorized, logout)
-router.post('/getCurruser', isAuthorized, getCurrUser)
+router.post('/logout', isAuth, logout)
+router.post('/getCurruser', isAuth, getCurrUser)
 // router.get('/google',)
 
 export default router

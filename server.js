@@ -21,8 +21,10 @@ app.use(express.urlencoded({ extended: true }))
 
 
 import AuthRouter from './router/auth.router.js'
+import roleRouter from './router/role.router.js'
 
 app.use('/api/auth', AuthRouter)
+app.use('/api/role', roleRouter)
 
 app.use('/', (req, res) => {
     res.send('Hello, World!');
