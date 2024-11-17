@@ -1,7 +1,7 @@
 
-import mongoose from "mongoose";
+// import mongoose from "mongoose";
 import { User } from "../model/user.model.js";
-import jwt from 'jsonwebtoken'
+// import jwt from 'jsonwebtoken'
 import { generateToken } from "../utils/createToken.js";
 
 export const register = async (req, res) => {
@@ -109,4 +109,27 @@ export const getCurrUser = async (req, res) => {
     }
 }
 
+
+export const authUsingGoogle= (req, res) => {
+    try{
+
+        const { user, token } = req.authInfo;
+
+        console.log(user, token);
+        
+        return res.status(200).json({
+            sucess: true, 
+            token, 
+            user
+        });
+
+    } catch(error) {
+
+        return res.status(500).json({
+            message: "Server Error",
+            error: error.message || error
+        });
+    }
+
+}
 

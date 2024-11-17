@@ -2,15 +2,10 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 
 const userSchema = new mongoose.Schema({
-    fname: { type: String, required: true },
-    lname: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
+    fname: { type: String},
+    lname: { type: String },
+    email: { type: String unique: true },
     password: { type: String, required: true },
-    role: {
-        type: String,
-        enum: ["user", "pandit", "seller", "owner"],
-        default: "user"
-    },
     googleId: {
         type: String,
     },
@@ -20,6 +15,7 @@ const userSchema = new mongoose.Schema({
         requestedAt: { type: Date },
     },
 }, { timestamps: true });
+
 
 userSchema.methods.validatePassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
