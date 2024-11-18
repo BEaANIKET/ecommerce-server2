@@ -7,7 +7,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-const passPort= passport.use(
+const passPort = passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -17,28 +17,23 @@ const passPort= passport.use(
     async (accessToken, refreshToken, profile, done) => {
       try {
         // Find or create user in the database
-        let user = await User.findOne({ googleId: profile.id  });
-        console.log("user", user);
-        
-        if (!user) {
-           user= await User.findOne({ email: profile.emails[0].value });
-           console.log("user", user);
+        let user = await User.findOne({ googleId: profile.id });
 
-          if(!user){
-            user= await User.create({
-                googleId: profile.id,
-                email: profile.emails[0].value,
-                name: profile.displayName,
+        if (!user) {
+          user = await User.findOne({ email: profile.emails[0].value });
+
+          if (!user) {
+            user = await User.create({
+              googleId: profile.id,
+              email: profile.emails[0].value,
+              name: profile.displayName,
             });
-            console.log("user", user);
-          }else{
-            user.googleId=profile.id
-            console.log("user", user);
+          } else {
+            user.googleId = profile.id
           }
         }
 
-        const token= await generateToken({email: user.email})
-        console.log(token)
+        const token = await generateToken({ email: user.email })
         return done(null, { user, token });
       } catch (err) {
         return done(err, null);
