@@ -7,9 +7,7 @@ import { generateToken } from "../utils/createToken.js";
 export const register = async (req, res) => {
     try {
 
-        const { fname, lname, email, password } = req.body;
-        console.log(fname, lname, email, password);
-
+        const { name, email, password } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -18,8 +16,7 @@ export const register = async (req, res) => {
 
 
         const newUser = new User({
-            fname,
-            lname,
+            name,
             email,
             password,
             role: 'owner'

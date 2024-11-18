@@ -15,9 +15,8 @@ router.get('/get', async (req, res) => {
 router.post('/register', register)
 router.post('/login', login)
 router.get('/google', passPort.authenticate('google', { scope: ['profile', 'email'] }))
-router.get('/google/redirect', passPort.authenticate('google', { session: false }), authUsingGoogle )
+router.get('/google/redirect', passPort.authenticate('google', { session: false }), authUsingGoogle)
 router.post('/logout', isAuth, logout)
 router.post('/getCurruser', isAuth, getCurrUser)
-
 
 export default router

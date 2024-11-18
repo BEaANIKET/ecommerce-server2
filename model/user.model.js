@@ -8,6 +8,9 @@ const userSchema = new mongoose.Schema({
     googleId: {
         type: String,
     },
+    role: {
+        type:String, default:'user'
+    },
     roleChangeRequest: {
         requestedRole: { type: String, enum: ["pandit", "seller"], default: null },
         status: { type: String, enum: ["pending", "approved", "rejected", null], default: null},
