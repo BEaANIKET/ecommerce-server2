@@ -11,7 +11,6 @@ export const dbConnect = async () => {
     while (attempts < MAX_RETRIES) {
         try {
             await mongoose.connect(process.env.MONGODB_URI);
-            console.log("Connected to MongoDB");
             break;
         } catch (error) {
             attempts += 1;

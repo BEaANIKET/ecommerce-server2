@@ -1,13 +1,31 @@
 import express from "express";
 import { isAuth } from "../middleware/index.js";
-import { getPendingRoleChangeRequests, requestRoleChange, approveRoleChange } from "../controllers/role.controllers.js";
+import { approvePanditRequest, approveSellerRequest, cancelMyRequest, getAllVerifiedUsers, getMyRequestStatus, getPendingPanditRequests, getPendingSellerRequests, rejectPanditRequest, rejectSellerRequest, rejectVerification, requestPanditRequest, requestSellerRequest } from "../controllers/role.controllers.js";
 
 const router = express.Router();
 
-router.get("/pending", isAuth, getPendingRoleChangeRequests);
+// pandit role router 
+router.post("/requestPandit", isAuth, requestPanditRequest);
 
-router.post("/request", isAuth, requestRoleChange);
 
-router.post("/approve/:userId", isAuth, approveRoleChange);
+
+//  seller role router 
+router.post('/requestSellerRequest', isAuth, requestSellerRequest)
+
+// owner role router
+router.post('/getMyRequestStatus', isAuth, getMyRequestStatus)
+router.post('/cenceleRequestStatus', isAuth, cancelMyRequest)
+
+
+// owner role router
+router.post('/getPendingPanditRequest', isAuth, getPendingPanditRequests)
+router.post('/getPendingSellerRequest', isAuth, getPendingSellerRequests)
+router.post('/rejectPanditRequest', isAuth, rejectPanditRequest)
+router.post('/approvedPanditRequest', isAuth, approvePanditRequest);
+router.post('/rejectVerification', isAuth, rejectVerification)
+router.post('/getAllVerified', isAuth, getAllVerifiedUsers)
+router.post('/approvedSellerRequest', isAuth, approveSellerRequest)
+router.post('/rejectSellerRequest', isAuth, rejectSellerRequest)
+
 
 export default router;
