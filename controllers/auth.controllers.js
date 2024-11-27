@@ -195,7 +195,7 @@ export const authUsingGoogle = (req, res) => {
         });
 
         const redirectUri = process.env.FRONTEND_URL || 'http://localhost:5173';
-        return res.redirect(`${redirectUri}/redirect?token=${token}`);
+        return res.redirect(`${redirectUri}/redirecting?token=${token}`);
 
     } catch (error) {
 

@@ -12,7 +12,7 @@ router.get('/get', (req, res) => {
 })
 router.post('/register', register)
 router.post('/login', login)
-router.post('/getCurruser', isAuth, getCurrUser)
+router.get('/getCurruser', isAuth, getCurrUser)
 router.post('/verify', verifyUser)
 router.get('/google', passPort.authenticate('google', { scope: ['profile', 'email'] }))
 router.get('/google/redirect', passPort.authenticate('google', { session: false }), authUsingGoogle)

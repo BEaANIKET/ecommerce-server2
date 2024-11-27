@@ -128,7 +128,7 @@ export const getSearchProduct = async (req, res) => {
 };
 
 export const getFilterProduct = async (req, res) => {
-    const { categories, sort, minPrice, maxPrice, page = 1, limit = 12 } = req.body;
+    const { categories, sort, minPrice, maxPrice, page = 1, limit = 10 } = req.body;
 
     try {
         let query = {};
