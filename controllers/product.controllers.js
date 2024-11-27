@@ -38,7 +38,6 @@ export const addProduct = async (req, res) => {
     }
 }
 
-
 export const updateProduct = async (req, res) => {
     try {
         const { data } = req.body;
@@ -99,7 +98,6 @@ export const deleteProduct = async (req, res) => {
     }
 }
 
-
 export const getSearchProduct = async (req, res) => {
     try {
         const { s } = req.query;
@@ -129,10 +127,8 @@ export const getSearchProduct = async (req, res) => {
     }
 };
 
-
-
 export const getFilterProduct = async (req, res) => {
-    const { categories, sort, minPrice, maxPrice } = req.body;
+    const { categories, sort, minPrice, maxPrice, page = 1, limit = 12 } = req.body;
 
     try {
         let query = {};
@@ -157,12 +153,44 @@ export const getFilterProduct = async (req, res) => {
             sortCriteria.discountPrice = 1;
         }
 
-        const products = await Product.find(query).sort({ ...sortCriteria });
+        const skip = (Number(page) - 1) * Number(limit);
 
-        return res.status(200).json({ products });
+        const products = await Product.find(query)
+            .sort(sortCriteria)
+            .skip(skip)
+            .limit(Number(limit));
+
+        const total = await Product.countDocuments(query);
+
+        return res.status(200).json({
+            products,
+            total,
+            page: Number(page),
+            totalPages: Math.ceil(total / Number(limit)),
+        });
     } catch (error) {
-        // console.error("Error fetching products:", error);
         return res.status(500).json({ message: error.message || "Failed to fetch products." });
     }
 };
+
+
+export const getProductDetails = async (req, res) => {
+    try {
+        const { productId } = req.query;
+
+        if (!productId) {
+            return res.status(400).json({ message: "Product ID is required" });
+        }
+
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+
+        return res.status(200).json({ product });
+    } catch (error) {
+        return res.status(500).json({ message: "Failed to fetch product details" });
+    }
+}
 

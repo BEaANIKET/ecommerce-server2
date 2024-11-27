@@ -194,7 +194,7 @@ export const authUsingGoogle = (req, res) => {
             maxAge: 7 * 24 * 60 * 60
         });
 
-        const redirectUri = process.env.FRONTEND_URL || 'http://localhost:3000';
+        const redirectUri = process.env.FRONTEND_URL || 'http://localhost:5173';
         return res.redirect(`${redirectUri}/redirect?token=${token}`);
 
     } catch (error) {

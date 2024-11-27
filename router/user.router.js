@@ -4,7 +4,7 @@ import { isAuth } from "../middleware/index.js";
 
 const router = Router()
 
-router.post('/updateProfile', isAuth, updateProfile)
+router.patch('/updateProfile', isAuth, updateProfile)
 
 export default router
 

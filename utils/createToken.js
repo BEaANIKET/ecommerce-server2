@@ -15,3 +15,8 @@ export const generateToken = async (res, data) => {
 
     return token
 }
+
+export const generateToken2 = async (data) => {
+    const token = jwt.sign(data, process.env.JWT_SALT, { expiresIn: '30d' });
+    return token;
+}

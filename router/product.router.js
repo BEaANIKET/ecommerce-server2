@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addProduct, deleteProduct, getFilterProduct, getSearchProduct, updateProduct } from "../controllers/product.controllers.js";
+import { addProduct, deleteProduct, getFilterProduct, getProductDetails, getSearchProduct, updateProduct } from "../controllers/product.controllers.js";
 import { isAuth } from "../middleware/index.js";
 
 const router = Router()
@@ -10,6 +10,7 @@ router.post('/updateproduct', isAuth, updateProduct)
 router.delete('/deleteproduct', isAuth, deleteProduct)
 router.post('/getFilterProduct', getFilterProduct)
 router.post('/getSearchProduct', getSearchProduct)
+router.post('/getProductDetails', getProductDetails)
 
 
 

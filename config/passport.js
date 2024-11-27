@@ -1,7 +1,7 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../model/user.model.js";
-import { generateToken } from "../utils/createToken.js";
+import { generateToken, generateToken2 } from "../utils/createToken.js";
 import dotenv from "dotenv";
 
 
@@ -33,7 +33,7 @@ const passPort = passport.use(
           }
         }
 
-        const token = await generateToken({ email: user.email })
+        const token = await generateToken2({ email: user.email })
         return done(null, { user, token });
       } catch (err) {
         return done(err, null);
