@@ -56,11 +56,14 @@ import AuthRouter from './router/auth.router.js'
 import roleRouter from './router/role.router.js'
 import ProductRoute from './router/product.router.js'
 import userRouter from './router/user.router.js'
+import CartRouter from './router/cart.router.js'
 
 app.use('/api/auth', AuthRouter)
 app.use('/api/role', roleRouter)
 app.use('/api/product', ProductRoute)
 app.use('/api/user', userRouter)
+app.use('/api/cart', CartRouter)
+
 
 app.listen(4000, '0.0.0.0', () => {
     console.log("Server is running on port http://localhost:4000");

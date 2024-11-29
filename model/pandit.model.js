@@ -16,6 +16,14 @@ const panditSchema = new mongoose.Schema({
     age: {
         type: String,
         // required: true,
+    },
+    aadharNo: {
+        type: String,
+        // required: true,
+    },
+    balance: {
+        type: Number,
+        // required: true,
     }
 
 }, { timestamps: true });

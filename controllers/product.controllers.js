@@ -173,7 +173,6 @@ export const getFilterProduct = async (req, res) => {
     }
 };
 
-
 export const getProductDetails = async (req, res) => {
     try {
         const { productId } = req.query;

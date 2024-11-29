@@ -14,7 +14,6 @@ const generateRandomToken = (length = 32) => {
     return token;
 };
 
-
 export const register = async (req, res) => {
     try {
         const { email, name, password } = req.body;
@@ -106,9 +105,6 @@ export const verifyUser = async (req, res) => {
     }
 };
 
-
-
-
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -182,7 +178,6 @@ export const getCurrUser = async (req, res) => {
         })
     }
 };
-
 
 export const authUsingGoogle = (req, res) => {
     try {

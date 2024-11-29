@@ -10,7 +10,7 @@ router.post('/updateproduct', isAuth, updateProduct)
 router.delete('/deleteproduct', isAuth, deleteProduct)
 router.post('/getFilterProduct', getFilterProduct)
 router.post('/getSearchProduct', getSearchProduct)
-router.post('/getProductDetails', getProductDetails)
+router.get('/getProductDetails', getProductDetails)
 
 
 

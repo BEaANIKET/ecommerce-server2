@@ -458,3 +458,33 @@ export const getAllVerifiedUsers = async (req, res) => {
         })
     }
 }
+
+export const payToPandit = async (req, res) => {
+    try {
+        const { userId, amount } = req.body
+
+        if (!userId || !amount) {
+            return res.status(400).json({
+                message: "User ID and amount are required."
+            });
+        }
+
+        const pandit = await Pandit.findByIdAndUpdate(userId, { balance: Pandit.balance + amount }, { new: true });
+
+        if (!pandit) {
+            return res.status(404).json({
+                message: "User not found."
+            });
+        }
+
+        return res.status(200).json({
+            message: "Payment successful.",
+            pandit
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || "Server error occurred while paying to pandit."
+        })
+    }
+}

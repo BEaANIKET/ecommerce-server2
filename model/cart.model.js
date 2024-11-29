@@ -8,7 +8,7 @@ const cartSchema = new mongoose.Schema({
             quantity: { type: Number, required: true },
         },
     ],
-    totalPrice: { type: String, required: true },
+    // totalPrice: { type: String, required: true },
     // isOrderPlaced: { type: Boolean, default: false },
 })
 
