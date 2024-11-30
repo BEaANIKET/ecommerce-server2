@@ -1,11 +1,12 @@
 import express from "express";
 import { isAuth } from "../middleware/index.js";
 import { approvePanditRequest, approveSellerRequest, cancelMyRequest, getAllVerifiedUsers, getMyRequestStatus, getPendingPanditRequests, getPendingSellerRequests, rejectPanditRequest, rejectSellerRequest, rejectVerification, requestPanditRequest, requestSellerRequest } from "../controllers/role.controllers.js";
+import upload from "../middleware/multer/index.js";
 
 const router = express.Router();
 
 // pandit role router 
-router.post("/requestPandit", isAuth, requestPanditRequest);
+router.post("/requestPandit", isAuth, upload.single("file"), requestPanditRequest);
 
 
 
@@ -13,7 +14,7 @@ router.post("/requestPandit", isAuth, requestPanditRequest);
 router.post('/requestSellerRequest', isAuth, requestSellerRequest)
 
 // owner role router
-router.post('/getMyRequestStatus', isAuth, getMyRequestStatus)
+router.get('/getMyRequestStatus', isAuth, getMyRequestStatus)
 router.post('/cenceleRequestStatus', isAuth, cancelMyRequest)
 
 
