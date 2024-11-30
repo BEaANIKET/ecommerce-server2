@@ -3,64 +3,64 @@ import { Pandit } from "../model/pandit.model.js";
 import { Seller } from "../model/seller.model.js";
 import { PanditRequest } from "../model/panditRequest.model.js";
 import { SellerRequest } from "../model/sellerRequest.model.js";
-import { generateToken } from "../utils/createToken.js";
+import cloudinary from "../config/cloudinaryConfig.js";
+import fs from "fs";
 
 
 export const requestPanditRequest = async (req, res) => {
     try {
-        const { requestedRole, contact, expertise, experience, imageUrl, age } = req.body;
+        const file = req.file;
 
-        if (!requestedRole || !contact || !expertise || !experience || !imageUrl) {
-            return res.status(400).json({ message: "All fields are required." });
-        }
-        if (!req.user) {
-            return res.status(401).json({ message: "No user authenticated." });
+        if (!file) {
+            return res.status(400).json({ message: "Profile image is required!" });
         }
 
-        const sellerRequest = await SellerRequest.findOne({ userId: req.user.id });
-        if (sellerRequest) {
-            return res.status(401).json({
-                message: "You already for a seller"
-            })
+        const { expertise, experience, contact, age, aadharNo } = req.body;
+
+        if (!expertise || !experience || !contact || !age || !aadharNo) {
+            return res.status(400).json({ message: "All fields are required!" });
         }
 
-        const user = await User.findById(req.user.id);
+        if (req.user.role !== 'user') {
+            fs.unlinkSync(file.path);
 
-        if (!user) {
-            return res.status(404).json({ message: "User not found." });
+            return res.status(403).json({ message: "You cant apply for a pandit" });
         }
-        if (user.role !== 'user') {
-            return res.status(403).json({ message: "Only users with role 'user' can request a pandit." });
-        }
-        const exiestedUser = await PanditRequest.findOne({ userId: req.user.id })
-        if (exiestedUser) {
-            return res.status(403).json({ message: "You have already requested a pandit." });
+        const pandit = await PanditRequest.find({ userId: req.user.id })
+        console.log("pandit", pandit);
+
+        if (pandit.length) {
+            fs.unlinkSync(file.path);
+            return res.status(400).json({ message: "You have already requested for pandit services." });
         }
 
-        const newPanditRequest = await PanditRequest.create({
-            contact,
+        const uploadedImage = await cloudinary.uploader.upload(file.path, {
+            folder: "pandit_profiles",
+        });
+        const newPandit = new PanditRequest({
+            userId: req.user.id,
             expertise,
             experience,
-            imageUrl,
-            userId: user._id,
-            age
+            contact,
+            age,
+            aadharNo,
+            imageUrl: uploadedImage.secure_url,
         });
 
-        if (!newPanditRequest) {
-            return res.status(500).json({ message: "Failed to create pandit profile." });
-        }
+        await newPandit.save()
+        fs.unlinkSync(file.path);
+        console.log("Saved Pandit:", newPandit);
 
-        return res.status(200).json({
-            message: "Role change request submitted successfully.",
-            roleChangeRequest: newPanditRequest,
+        res.status(201).json({
+            message: "Pandit registered successfully!",
+            pandit: newPandit,
         });
     } catch (error) {
-        console.error("Error in requestPanditRequest:", error.message);
-        return res.status(500).json({
-            message: "Server error. Please try again later.",
-            error: error.message,
-        });
+        fs.unlinkSync(file.path);
+        console.error(error);
+        res.status(500).json({ message: "An error occurred while registering the pandit.", error: error });
     }
+
 };
 
 export const approvePanditRequest = async (req, res) => {
@@ -400,7 +400,6 @@ export const cancelMyRequest = async (req, res) => {
         else if (requestType === 'seller') {
             await SellerRequest.findOneAndDelete({ userId });
         }
-
         return res.status(200).json({
             message: "Request cancelled successfully."
         });

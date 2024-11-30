@@ -2,11 +2,17 @@ import jwt from 'jsonwebtoken'
 import { User } from '../model/user.model.js'
 
 export const isAuth = async (req, res, next) => {
+
     try {
         const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
         const decodedToken = jwt.verify(token, process.env.JWT_SALT);
         const user = await User.findOne({ email: decodedToken.email }).select("email name role")
-        req.user = user;
+        req.user = {
+            id: user._id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+        }
         next()
     } catch (error) {
         return res.status(500).json({
