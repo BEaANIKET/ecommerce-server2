@@ -16,7 +16,7 @@ const generateRandomToken = (length = 32) => {
 
 export const register = async (req, res) => {
     try {
-        const { email, name, password } = req.body;
+        const { email, firstName, lastName, password } = req.body;
 
         const existingUser = await User.findOne({ email });
         if (existingUser) {
@@ -40,7 +40,8 @@ export const register = async (req, res) => {
 
         const newUnverifiedUser = new UnverifiedUser({
             email,
-            name,
+            firstName,
+            lastName,
             password: hashedPassword,
             verificationToken,
         });
@@ -85,9 +86,9 @@ export const verifyUser = async (req, res) => {
             });
         }
 
-        const { email, name, password } = unverifiedUser;
+        const { email, firstName, lastName, password } = unverifiedUser;
 
-        await User.create({ email, name, password });
+        await User.create({ email, firstName, lastName, password });
 
         await UnverifiedUser.deleteOne({ verificationToken: token });
 
@@ -96,8 +97,6 @@ export const verifyUser = async (req, res) => {
             message: "Email verified successfully!",
         });
     } catch (error) {
-        console.error("Error verifying user:", error);
-
         return res.status(500).json({
             success: false,
             message: "Server error. Please try again later.",
@@ -109,7 +108,7 @@ export const login = async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        const existedUser = await User.findOne({ email });
+        const existedUser = await User.findOne({ email }).select("password firstName lastName role _id email")
         if (!existedUser) {
             return res.status(401).json({ message: "user not exist" });
         }
@@ -119,13 +118,15 @@ export const login = async (req, res) => {
             return res.status(401).json({ message: "Invalid password" });
         }
 
-        const token = await generateToken(res, { name: existedUser.name, email: existedUser.email, id: existedUser._id, role: existedUser.role })
+        const token = await generateToken(res, { firstName: existedUser.firstName, lastName: existedUser.lastName, email: existedUser.email, id: existedUser._id, role: existedUser.role })
 
 
         res.setHeader('Set-Cookie', `token=${token}; HttpOnly; Secure; SameSite=None; Max-Age=3600*7; Path=/`);
         res.status(200).json({
             message: "Login successful",
             user: {
+                firstName: existedUser.firstName,
+                lastName: existedUser.lastName,
                 name: existedUser.name,
                 email: existedUser.email,
                 role: existedUser.role,
