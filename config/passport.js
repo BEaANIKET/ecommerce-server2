@@ -1,13 +1,12 @@
 import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { User } from "../model/user.model.js";
-import { generateToken, generateToken2 } from "../utils/createToken.js";
+import { generateToken2 } from "../utils/createToken.js";
 import dotenv from "dotenv";
-
 
 dotenv.config();
 
-const passPort = passport.use(
+passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
@@ -16,30 +15,43 @@ const passPort = passport.use(
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
-        // Find or create user in the database
+        // Attempt to find a user with the provided Google ID
         let user = await User.findOne({ googleId: profile.id });
 
         if (!user) {
-          user = await User.findOne({ email: profile.emails[0].value });
+          // If not found, attempt to find a user by email
+          const email = profile.emails?.[0]?.value;
+          if (!email) {
+            throw new Error("Google account does not provide an email address.");
+          }
 
+          user = await User.findOne({ email });
+
+          // If no user exists with the email, create a new user
           if (!user) {
             user = await User.create({
               googleId: profile.id,
-              email: profile.emails[0].value,
-              name: profile.displayName,
+              email,
+              firstName: profile.name?.givenName || profile.displayName?.split(" ")[0] || "Unknown",
+              lastName: profile.name?.familyName || profile.displayName?.split(" ")[1] || "",
             });
           } else {
-            user.googleId = profile.id
+            // Update the user's Google ID if the email matches an existing account
+            user.googleId = profile.id;
+            await user.save();
           }
         }
 
-        const token = await generateToken2({ email: user.email })
+        // Generate a token for the user
+        const token = await generateToken2({ email: user.email });
+
         return done(null, { user, token });
-      } catch (err) {
-        return done(err, null);
+      } catch (error) {
+        console.error("Error in Google OAuth strategy:", error.message);
+        return done(error, null);
       }
     }
   )
 );
 
-export default passPort;
+export default passport;
