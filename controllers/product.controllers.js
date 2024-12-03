@@ -158,7 +158,8 @@ export const getFilterProduct = async (req, res) => {
         const products = await Product.find(query)
             .sort(sortCriteria)
             .skip(skip)
-            .limit(Number(limit));
+            .limit(Number(limit))
+            .select("-createdAt -UpdatedAt")
 
         const total = await Product.countDocuments(query);
 
