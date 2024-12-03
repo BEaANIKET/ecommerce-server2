@@ -71,10 +71,71 @@ export const getOrderById = async (req, res) => {
 // Get all orders (for admin or user dashboard)
 export const getAllOrders = async (req, res) => {
     try {
-        const orders = await Order.find().populate("products.productId").sort({ orderDate: -1 });
+        const orders = await Order.aggregate([
+            // Match orders for the logged-in user
+            { $match: { userId: req.user.id } },
+
+            // Sort by order date in descending order
+            { $sort: { orderDate: -1 } },
+
+            // Lookup to populate product details
+            {
+                $lookup: {
+                    from: "products", // Name of the products collection
+                    localField: "products.productId",
+                    foreignField: "_id",
+                    as: "productDetails",
+                },
+            },
+
+            // Unwind products to merge details with their respective quantity
+            { $unwind: "$products" },
+
+            // Lookup the matching product details
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "products.productId",
+                    foreignField: "_id",
+                    as: "productData",
+                },
+            },
+
+            // Unwind the product data for easier manipulation
+            { $unwind: "$productData" },
+
+            // Group back orders by their _id, and aggregate product details
+            {
+                $group: {
+                    _id: "$_id",
+                    orderDate: { $first: "$orderDate" },
+                    totalAmount: { $first: "$totalAmount" },
+                    products: {
+                        $push: {
+                            name: "$productData.name",
+                            image: "$productData.image",
+                            price: "$productData.price",
+                            quantity: "$products.quantity",
+                        },
+                    },
+                },
+            },
+
+            // Project the final structure
+            {
+                $project: {
+                    _id: 1,
+                    orderDate: 1,
+                    totalAmount: 1,
+                    products: 1,
+                },
+            },
+        ]);
+
         res.status(200).json({ success: true, data: orders });
     } catch (error) {
         console.error("Error fetching orders: ", error);
         res.status(500).json({ error: "Internal Server Error" });
     }
 };
+
