@@ -85,7 +85,7 @@ export const getMyCart = async (req, res) => {
             {
                 $project: {
                     _id: 0,
-                    product: {
+                    products: {
                         _id: '$productDetails._id',
                         name: '$productDetails.name',
                         price: '$productDetails.price',
