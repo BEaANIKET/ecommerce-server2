@@ -436,7 +436,7 @@ export const rejectVerification = async (req, res) => {
 
 export const getAllVerifiedUsers = async (req, res) => {
     try {
-        const { roleType } = req.query
+        const { roleType, id } = req.query
 
         if (!roleType) {
             return res.status(400).json({
