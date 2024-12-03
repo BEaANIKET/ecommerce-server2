@@ -5,7 +5,7 @@ const sellerSchema = new mongoose.Schema({
     shopName: { type: String, required: true },
     shopAddress: { type: String, required: true },
     shopimage: { type: String },
-    shopDocument: { type: String },
+    AadhaarNum: { type: String },
     shopContactNo: { type: String }
 }, { timestamps: true });
 

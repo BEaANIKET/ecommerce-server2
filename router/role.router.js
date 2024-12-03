@@ -1,6 +1,6 @@
 import express from "express";
 import { isAuth } from "../middleware/index.js";
-import { approvePanditRequest, approveSellerRequest, cancelMyRequest, getAllVerifiedUsers, getMyRequestStatus, getPendingPanditRequests, getPendingSellerRequests, rejectPanditRequest, rejectSellerRequest, rejectVerification, requestPanditRequest, requestSellerRequest } from "../controllers/role.controllers.js";
+import { approvePanditRequest, approveSellerRequest, cancelMyRequest, getAllVerifiedUsers, getMyRequestStatus, getPanditData, getPendingPanditRequests, getPendingSellerRequests, getSellerData, rejectPanditRequest, rejectSellerRequest, rejectVerification, requestPanditRequest, requestSellerRequest } from "../controllers/role.controllers.js";
 import upload from "../middleware/multer/index.js";
 
 const router = express.Router();
@@ -24,9 +24,12 @@ router.post('/getPendingSellerRequest', isAuth, getPendingSellerRequests)
 router.post('/rejectPanditRequest', isAuth, rejectPanditRequest)
 router.post('/approvedPanditRequest', isAuth, approvePanditRequest);
 router.post('/rejectVerification', isAuth, rejectVerification)
-router.post('/getAllVerified', isAuth, getAllVerifiedUsers)
+// router.post('/getAllVerified', isAuth, getAllVerifiedUsers)
 router.post('/approvedSellerRequest', isAuth, approveSellerRequest)
 router.post('/rejectSellerRequest', isAuth, rejectSellerRequest)
+
+router.get('/sellerDetails', isAuth, getSellerData)
+router.get('/panditDetails', isAuth, getPanditData)
 
 
 export default router;

@@ -5,6 +5,8 @@ import { PanditRequest } from "../model/panditRequest.model.js";
 import { SellerRequest } from "../model/sellerRequest.model.js";
 import cloudinary from "../config/cloudinaryConfig.js";
 import fs from "fs";
+import { checkIfPresent } from "../utils/checkIfPresent.js";
+import { getRoleData } from "../utils/getRoleData.js";
 
 
 export const requestPanditRequest = async (req, res) => {
@@ -436,11 +438,11 @@ export const rejectVerification = async (req, res) => {
 
 export const getAllVerifiedUsers = async (req, res) => {
     try {
-        const { roleType } = req.query
+        const { id } = req.query
 
-        if (!roleType) {
+        if (!id) {
             return res.status(400).json({
-                message: "Role type is required."
+                message: "ID is required."
             });
         }
 
@@ -456,6 +458,34 @@ export const getAllVerifiedUsers = async (req, res) => {
             message: error.message || "Server error occurred while fetching verified users."
         })
     }
+}
+
+export const getSellerData = async (req, res) => {
+
+    const { id } = req.query;
+    if (!checkIfPresent(id)) {
+        return res.status(400).json({
+            message: "ID is required."
+        });
+    }
+
+    const data = await getRoleData(Seller, id)
+
+    return data
+}
+
+export const getPanditData = async (req, res) => {
+
+    const { id } = req.query;
+    if (!checkIfPresent(id)) {
+        return res.status(400).json({
+            message: "ID is required."
+        });
+    }
+
+    const data = await getRoleData(Pandit, id)
+
+    return data;
 }
 
 export const payToPandit = async (req, res) => {
