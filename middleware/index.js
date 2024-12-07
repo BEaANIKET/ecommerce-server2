@@ -7,7 +7,6 @@ export const isAuth = async (req, res, next) => {
         const token = req.cookies?.token || req.header("Authorization")?.replace("Bearer ", "");
         const decodedToken = jwt.verify(token, process.env.JWT_SALT);
         const user = await User.findOne({ email: decodedToken.email }).select("email firstName lastName role")
-        console.log(user);
 
         req.user = {
             id: user._id,
@@ -16,7 +15,6 @@ export const isAuth = async (req, res, next) => {
             lastName: user.lastName,
             role: user.role,
         }
-        console.log(req.user);
 
         next()
     } catch (error) {
