@@ -153,9 +153,9 @@ export const rejectPanditRequest = async (req, res) => {
 
 export const requestSellerRequest = async (req, res) => {
     try {
-        const { shopName, shopAddress, shopImage, shopDocument, shopContactNo } = req.body;
+        const { shop_name, shop_address, imageUrl, pin_code, shop_contact,AadhaarNum } = req.body;
 
-        if (!shopName || !shopAddress || !shopImage || !shopDocument || !shopContactNo) {
+        if (!shop_name || !shop_address || !imageUrl || !pin_code || !shop_contact || !AadhaarNum) {
             return res.status(400).json({ message: "All fields are required." });
         }
 
@@ -187,17 +187,17 @@ export const requestSellerRequest = async (req, res) => {
         }
 
         const newSellerRequest = await SellerRequest.create({
-            userId: user._id, shopName, shopAddress, shopImage, shopDocument, shopContactNo
+            userId: user._id, shop_name, shop_address, imageUrl, shop_contact, pin_code, AadhaarNum
         });
+ 
 
         if (!newSellerRequest) {
             return res.status(500).json({ message: "Failed to create Seller request." });
         }
 
-
         return res.status(200).json({
             message: "Role change request submitted successfully.",
-            roleChangeRequest: newSellerRequest,
+            // roleChangeRequest: newSellerRequest,
         });
     } catch (error) {
         console.error("Error in requestSellerRequest:", error.message);
@@ -228,10 +228,10 @@ export const approveSellerRequest = async (req, res) => {
         if (!sellerRequest) {
             return res.status(404).json({ message: "Seller request not found." });
         }
-        const { shopName, shopAddress, shopimage, shopDocument, shopContactNo } = sellerRequest;
+        const { shop_name, shop_address, imageUrl, pin_code, shop_contact, AadhaarNum } = sellerRequest;
 
         const newSeller = await Seller.create({
-            shopName, shopAddress, shopimage, shopDocument, shopContactNo, userId
+            shop_name, shop_address, imageUrl, pin_code, shop_contact, AadhaarNum, userId
         });
 
         if (!newSeller) {
@@ -298,7 +298,11 @@ export const getPendingPanditRequests = async (req, res) => {
             return res.status(401).json({ message: "User not authenticated." });
         }
 
-        const allPanditRequests = await PanditRequest.find();
+        const allPanditRequests = await PanditRequest.find().populate({
+            path: 'userId',
+            select: 'firstName lastName email role',
+        });
+        
         if (!allPanditRequests) {
             return res.status(404).json({ message: "No pending requests found." });
         }
@@ -326,11 +330,11 @@ export const getPendingSellerRequests = async (req, res) => {
 
         const allSellerRequest = await SellerRequest.find().populate({
             path: 'userId',
-            select: 'name email role',
+            select: 'firstName lastName email role',
         });
 
         if (!allSellerRequest) {
-            return res.status(401).json({ message: "no any pandit request." });
+            return res.status(204);
         }
 
         return res.status(200).json({

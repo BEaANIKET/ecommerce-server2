@@ -59,6 +59,7 @@ import userRouter from './router/user.router.js'
 import CartRouter from './router/cart.router.js'
 import AddressRouter from './router/address.router.js'
 import orderRouter from './router/order.router.js'
+import ownerRouter from './router/owner.router.js'
 
 app.use('/api/auth', AuthRouter)
 app.use('/api/role', roleRouter)
@@ -67,6 +68,7 @@ app.use('/api/user', userRouter)
 app.use('/api/cart', CartRouter)
 app.use('/api/address', AddressRouter)
 app.use('/api/order', orderRouter)
+app.use('/api/owner', ownerRouter)
 
 
 app.listen(4000, '0.0.0.0', () => {

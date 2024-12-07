@@ -20,6 +20,10 @@ const panditRequestSchema = new mongoose.Schema({
     aadharNo: {
         type: String,
         required: true,
+    },
+    appliedRole: {
+        type: String, 
+        default:"pandit",
     }
 
 }, { timestamps: true });

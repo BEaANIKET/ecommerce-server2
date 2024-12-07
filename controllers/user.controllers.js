@@ -41,4 +41,21 @@ export const updateProfile = async (req, res) => {
     }
 }
 
+export const allUser = async (req, res) => {
+    try{
+        const totalUser= await User.find()
 
+        if(!totalUser) {
+            return res.status(404).json({ message: "No User found" });
+        }
+
+        return res.status(201).json({
+            message: "Total user successfully fetched.",
+            data: totalUser.length
+        })
+    }catch(error) {
+        return res.status(500).json({
+            message: error.message || "Server error occurred while updating profile",
+        })
+    }
+}
