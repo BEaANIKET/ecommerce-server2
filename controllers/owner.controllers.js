@@ -1,5 +1,9 @@
+import mongoose from "mongoose";
 import { Pandit } from "../model/pandit.model.js";
 import { Seller } from "../model/seller.model.js";
+import cloudinary from "../config/cloudinaryConfig.js";
+import { Banner } from "../model/banner.model.js";
+import fs from "fs";
 
 export const getAllSeller = async (req, res) => {
 
@@ -38,7 +42,7 @@ export const getAllPandit = async (req, res) => {
         const pandits = await Pandit.find().populate({
             path: 'userId',
             select: 'firstName lastName email',
-        });;
+        });
 
         if (!pandits.length) {
             return res.status(404).json({ message: "No pandit found" })
@@ -53,5 +57,157 @@ export const getAllPandit = async (req, res) => {
         return res.status(500).json({
             message: error.message || "Server error occurred while fetching verified users."
         })
+    }
+}
+
+export const getSpecificSeller = async (req, res) => {
+
+    const id = req.params.id
+    try{
+
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({ message: "Provided id is not valid!" })
+        }
+
+        const seller= await Seller.findOne({
+            _id: id
+        }).populate({
+            path: 'userId',
+            select: 'firstName lastName email',
+        })
+    
+        if(!seller){
+            return res.status(404).json({ message: "No seller with the Provided id found" })
+        }
+
+        return res.status(200).json({
+            message: "Seller with specific id fetched successfully",
+            seller
+        })
+
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            message: error.message || "Server error occurred while fetching verified seller."
+        })
+    }
+}
+
+export const getSpecificPandit= async (req, res) => {
+    const id= req.params.id
+    try{
+
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({ message: "Provided id is not valid!" })
+        }
+
+        const pandit= await Pandit.findOne({
+            _id: id
+        }).populate({
+            path: 'userId',
+            select: 'firstName lastName email',
+        })
+    
+        if(!pandit){
+            return res.status(404).json({ message: "No pandit with the Provided id found" })
+        }
+
+        return res.status(200).json({
+            message: "Pandit with specific id fetched successfully",
+            pandit
+        })
+
+    } catch(error) {
+        console.log(error)
+        return res.status(500).json({
+            message: error.message || "Server error occurred while fetching verified seller."
+        })
+    }
+}
+
+
+
+export const postBanner = async (req, res) => {
+    try {
+        const filePath = req.file;  // Use filePath variable here
+
+        if (!filePath) {  // Check if filePath is missing
+            return res.status(400).json({ message: "Image is required!" });
+        }
+
+        // Upload to Cloudinary
+        const result = await cloudinary.uploader.upload(filePath.path, {
+            folder: 'banner'
+        });
+
+        // Create new banner entry in the database
+        const newBanner = new Banner({ bannerUrl: result.secure_url });
+
+        await newBanner.save();
+        fs.unlinkSync(filePath.path)
+
+        // Respond with the URL of the uploaded banner image
+        return res.status(200).json({ url: result.secure_url });
+    } catch (error) {
+        console.error(error);
+        fs.unlinkSync(filePath.path)
+        return res.status(500).json({ message: "Failed to upload banner." });
+    }
+};
+
+export const getBannerUrl= async (req, res) => {
+    try{
+        const banner= await Banner.find();
+
+        if(!banner.length){
+            return res.status(404).json({ message: "No banner has been uploaded yet. Please upload a banner image to proceed.",})
+        }
+
+        return res.status(200).json({ banner })
+    }catch(error) {
+        console.error(error);
+
+        return res.status(500).json({  
+            message: "An unexpected error occurred. Please contact support if the issue persists." 
+        });
+    }
+}
+
+export const deleteBanner= async (req, res) => {
+    try{
+        const id= req.query.id;
+        if(!id) {
+            return res.status(400).json({ 
+                message: "The request URL must include a valid ID parameter.Ensure you have included the ID and try again."
+            })
+        }
+
+        if(!mongoose.Types.ObjectId.isValid(id)){
+            return res.status(404).json({ message: "Provided id is not valid!" })
+        }
+        
+        const banner = await Banner.findById(id);
+        if (!banner) {
+            return res.status(404).json({ 
+                message: "No banner found with the provided ID." 
+            });
+        }
+
+        // Delete the banner
+        await Banner.deleteOne({ _id: id });
+
+        // Return success response
+        return res.status(200).json({
+            message: "Banner deleted successfully.",
+            bannerId: id
+        });
+        
+    }catch(error) {
+
+        console.error(error);
+
+        return res.status(500).json({  
+            message: "An unexpected error occurred. Please try again later." 
+        });
     }
 }
