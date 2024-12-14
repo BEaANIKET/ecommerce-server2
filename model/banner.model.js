@@ -8,4 +8,6 @@ const bannerSchema = new mongoose.Schema({
   },
 });
 
+
+
 export const Banner = mongoose.model('Banner', bannerSchema);
