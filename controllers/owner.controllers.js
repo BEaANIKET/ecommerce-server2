@@ -4,6 +4,7 @@ import { Seller } from "../model/seller.model.js";
 import cloudinary from "../config/cloudinaryConfig.js";
 import { Banner } from "../model/banner.model.js";
 import fs from "fs";
+import { Categories } from "../model/category.model.js";
 
 export const getAllSeller = async (req, res) => {
 
@@ -193,10 +194,8 @@ export const deleteBanner= async (req, res) => {
             });
         }
 
-        // Delete the banner
         await Banner.deleteOne({ _id: id });
 
-        // Return success response
         return res.status(200).json({
             message: "Banner deleted successfully.",
             bannerId: id
@@ -205,9 +204,100 @@ export const deleteBanner= async (req, res) => {
     }catch(error) {
 
         console.error(error);
-
         return res.status(500).json({  
             message: "An unexpected error occurred. Please try again later." 
+        });
+    }
+}
+
+export const postCategory = async (req, res) => {
+    try {
+        // Destructure request body
+        const { title, gradient, icon } = req.body;
+
+        // Validate required fields
+        if (!title || !gradient || !icon) {
+            return res.status(400).json({
+                message: "All fields are required. Please ensure 'title', 'gradient', and 'icon' are provided.",
+            });
+        }
+
+        const existingCategory = await Categories.findOne({ title: title });
+
+        if (existingCategory) {
+            return res.status(400).json({
+                message: "Category already exists.",
+            });
+        }
+        
+        const category = new Categories({
+            title,
+            gradient,
+            icon,
+        });
+
+        // Save category to the database
+        await category.save();
+
+        // Return success response
+        return res.status(201).json({
+            message: "Category successfully created!",
+            category,
+        });
+
+    } catch (error) {
+        console.error("Error creating category:", error);
+
+        return res.status(500).json({
+            message: "An unexpected error occurred. Please try again later.",
+        });
+    }
+};
+
+export const getCategory= async(req, res) => {
+    try{
+        const category= await Categories.find();
+
+        if(!category.length){
+            return res.status(404).json({ 
+                message: "No Category has been added yet. Please add a Category to proceed.",
+            })
+        }
+
+        return res.status(200).json({ category })
+
+    }catch(error){
+        console.error("Error creating category:", error);
+
+        return res.status(500).json({
+            message: "An unexpected error occurred. Please try again later.",
+        });
+    }
+}
+
+export const deleteCategory = async(req, res) => {
+    try{
+        const { name }= req.query;
+
+        if(!name) {
+            return res.status(400).json({ 
+                message: "The request URL must include a valid name parameter.Ensure you have included the name and try again."
+            });
+        }
+
+        await Categories.deleteOne({
+            title: name
+        })
+
+        return res.status(200).json({
+            message: "Category deleted successfully.",
+        });
+
+    }catch(error) {
+        console.log(error)
+
+        return res.status(500).json({
+            message: "An unexpected error occurred. Please try again later.",
         });
     }
 }
