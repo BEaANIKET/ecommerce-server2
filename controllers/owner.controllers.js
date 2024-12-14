@@ -136,19 +136,21 @@ export const postBanner = async (req, res) => {
             return res.status(400).json({ message: "Image is required!" });
         }
 
+        const { type }= req.body
+
         // Upload to Cloudinary
         const result = await cloudinary.uploader.upload(filePath.path, {
             folder: 'banner'
         });
 
         // Create new banner entry in the database
-        const newBanner = new Banner({ bannerUrl: result.secure_url });
+        const newBanner = new Banner({ bannerUrl: result.secure_url, bannerType: type });
 
         await newBanner.save();
         fs.unlinkSync(filePath.path)
 
         // Respond with the URL of the uploaded banner image
-        return res.status(200).json({ url: result.secure_url });
+        return res.status(200).json({newBanner});
     } catch (error) {
         console.error(error);
         fs.unlinkSync(filePath.path)

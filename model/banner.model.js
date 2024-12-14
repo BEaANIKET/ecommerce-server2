@@ -6,6 +6,11 @@ const bannerSchema = new mongoose.Schema({
     required: true,
     trim: true, 
   },
+  bannerType: {
+    type: String,
+    required: true,
+    trim: true
+  },
 });
 
 
