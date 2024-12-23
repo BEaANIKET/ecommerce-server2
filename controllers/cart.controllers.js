@@ -91,7 +91,7 @@ export const getMyCart = async (req, res) => {
                         price: '$productDetails.price',
                         descriptions: '$productDetails.descriptions',
                         discountPrice: '$productDetails.discountPrice',
-                        image: '$productDetails.image',
+                        images: '$productDetails.images',
                         category: '$productDetails.category',
                     },
                     quantity: '$products.quantity',
