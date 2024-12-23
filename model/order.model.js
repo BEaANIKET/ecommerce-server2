@@ -2,6 +2,16 @@
 
 import mongoose from "mongoose";
 
+    //         productId: item.products._id,
+    //         productSku: item.products.productSku,
+    //         quantity: item.quantity,
+    //         discountPrice: item.products.discountPrice,
+    //         name: item.products.name,
+    //         image: item.products.images,
+    //         totalPrice: item.products.discountPrice * item.quantity,
+    //         category: item.products.category,
+    //         taxPercentage: item.products.taxPercentage
+
 
 const orderSchema = new mongoose.Schema(
     {
@@ -30,13 +40,25 @@ const orderSchema = new mongoose.Schema(
                     type: String,
                     required: true,
                 },
-                description: {
-                    type: String,
-                    // required: true,
-                },
                 totalPrice: {
                     type: Number,
                     required: true,
+                },
+                category: {
+                    type: String,
+                    required: true,
+                },
+                taxPercentage: {
+                    type: Number,
+                    required: true,
+                },
+                image: {
+                    type: String,
+                    required: true
+                },
+                productSku: {
+                    type: String,
+                    required: true
                 }
             },
         ],
@@ -61,14 +83,9 @@ const orderSchema = new mongoose.Schema(
             type: String,
             required: false,
         },
-        pamentStatus: {
-            type: String,
-            enum: ["paid", "pending"],
-            required: true,
-        },
         status: {
             type: String,
-            enum: ["pending", "completed", "cancelled"],
+            enum: ["pending", "delivered", "cancelled"],
             default: "pending",
         },
         orderDate: {
