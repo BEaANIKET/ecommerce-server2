@@ -1,5 +1,13 @@
 import { Router } from "express";
-import { addProduct, deleteProduct, getFilterProduct, getProductDetails, getSearchProduct, updateProduct } from "../controllers/product.controllers.js";
+import { 
+    addProduct, 
+    deleteProduct, 
+    getAllProducts, 
+    getFilterProduct, 
+    getProductDetails, 
+    getSearchProduct, 
+    updateProduct 
+} from "../controllers/product.controllers.js";
 import { isAuth } from "../middleware/index.js";
 
 const router = Router()
@@ -11,6 +19,7 @@ router.delete('/deleteproduct', isAuth, deleteProduct)
 router.post('/getFilterProduct', getFilterProduct)
 router.post('/getSearchProduct', getSearchProduct)
 router.get('/getProductDetails', getProductDetails)
+router.get('/getAllProducts', getAllProducts)
 
 
 
